@@ -14,7 +14,7 @@ namespace Centroid.Tests
 
         public ConfigTest()
         {
-            sharedFilePath = Path.Combine("..", "..", "..", "..", "config.json");
+            sharedFilePath = "config.json";
         }
 
         [Test]
