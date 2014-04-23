@@ -1,6 +1,7 @@
 require_relative "../lib/centroid"
 require "test/unit"
 require "json"
+require "test/unit/runner/tap"
 
 class ConfigTests < Test::Unit::TestCase
   def json_config
