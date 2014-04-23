@@ -78,7 +78,7 @@ namespace :test do
 
   desc "Test ruby"
   task :rb do
-    system "ruby ruby/test/centroid_test.rb --runner tap"
+    system "ruby ruby/test/centroid_test.rb --runner json | tapout"
   end
 end
 
