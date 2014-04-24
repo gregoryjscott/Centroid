@@ -20,3 +20,5 @@ TestResult.xml
 Gemfile.lock
 .bundle
 *.gem
+
+node_modules
