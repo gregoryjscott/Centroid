@@ -78,7 +78,7 @@ namespace :test do
 
   desc "Test python TAP example"
   task :pytap do
-    system "python python/ok.t | node node_modules/tap-parser/example/parse.js"
+    system "python python/pytap.py | node node_modules/tap-parser/example/parse.js"
   end
 
   desc "Test ruby (using TAP)"

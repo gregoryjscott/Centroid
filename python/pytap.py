@@ -1,9 +1,14 @@
-#!/usr/bin/env python
-# TEST SOME STUFF
 import TAP
+import json
+from centroid import Config
 
-# plan 15 tests, only make 13
-ok = TAP.Builder.create(15).ok
+ok = TAP.Builder.create(14).ok
+
+config = Config('{"Environment": {"TheKey": "TheValue"}}')
+ok(config.Environment.TheKey == "TheValue", "test create from string")
+
+config = Config.from_file('config.json')
+ok(config.dev.database.server == "sqldev01.centroid.local", "test create from file")
 
 ok(1)
 ok(1, "everything is OK!")
