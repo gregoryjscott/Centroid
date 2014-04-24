@@ -78,17 +78,17 @@ namespace :test do
 
   desc "Test python TAP example"
   task :pytap do
-    system "python python/ok.t | tapout"
+    system "python python/ok.t | node node_modules/tap-parser/example/parse.js"
   end
 
   desc "Test ruby (using TAP)"
   task :rb do
-    system "ruby ruby/test/centroid_test.rb --runner json | tapout"
+    system "ruby ruby/test/centroid_test.rb --runner tap | node node_modules/tap-parser/example/parse.js"
   end
 
   desc "Test .NET TAP example"
   task :tap do
-    system "dot-net/test/support/tap.exe -s:dot-net/Centroid.Tests/bin/Debug dot-net/Centroid.Tests/hello.cs"
+    system "dot-net/test/support/tap.exe -s:dot-net/Centroid.Tests/bin/Debug dot-net/Centroid.Tests/hello.cs | node node_modules/tap-parser/example/parse.js"
   end
 end
 
