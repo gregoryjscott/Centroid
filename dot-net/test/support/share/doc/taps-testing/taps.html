@@ -1,0 +1,1741 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Taps</title><link rel="stylesheet" href="taps.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.0" /></head><body><div class="book" lang="en" xml:lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="id1280862"></a>Taps</h1></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#id1280874">1. Introduction</a></span></dt><dt><span class="chapter"><a href="#id1281172">2. License</a></span></dt><dd><dl><dt><span class="section"><a href="#id1281210">Using Taps with closed source software</a></span></dt><dt><span class="section"><a href="#id1281248">Using Taps with open source software</a></span></dt></dl></dd><dt><span class="chapter"><a href="#id1281281">3. Running tests</a></span></dt><dd><dl><dt><span class="section"><a href="#id1281296">General operation</a></span></dt><dt><span class="section"><a href="#id1281373">Command line arguments</a></span></dt><dt><span class="section"><a href="#id1281444">Accessing internal classes and methods</a></span></dt><dt><span class="section"><a href="#id1281493">A sample project</a></span></dt><dt><span class="section"><a href="#id1281777">Running scripts in parallel</a></span></dt><dt><span class="section"><a href="#id1281819">Timing tests</a></span></dt><dt><span class="section"><a href="#id1281878">Unhandled exceptions</a></span></dt></dl></dd><dt><span class="chapter"><a href="#id1281905">4. Test scripts</a></span></dt><dd><dl><dt><span class="section"><a href="#id1282023">All in Main</a></span></dt><dt><span class="section"><a href="#id1282065">Separate methods</a></span></dt><dt><span class="section"><a href="#id1282132">Threads</a></span></dt></dl></dd><dt><span class="chapter"><a href="#id1282169">5. Test methods</a></span></dt><dd><dl><dt><span class="section"><a href="#id1282230">Simple comparison</a></span></dt><dt><span class="section"><a href="#id1282308">Advanced comparison</a></span></dt><dt><span class="section"><a href="#id1282386">Diagnostics methods</a></span></dt><dt><span class="section"><a href="#id1282491">Miscellaneous</a></span></dt></dl></dd><dt><span class="chapter"><a href="#id1282577">6. Integration with other software</a></span></dt><dd><dl><dt><span class="section"><a href="#id1282584">Emacs</a></span></dt><dt><span class="section"><a href="#id1282624">Visual studio</a></span></dt><dt><span class="section"><a href="#id1282680">Test-Harness</a></span></dt></dl></dd><dt><span class="chapter"><a href="#apiref">7. API reference</a></span></dt><dd><dl><dt><span class="refentrytitle"><a href="#id1282781">Autorun</a></span><span class="refpurpose"> — Runs methods automatically.</span></dt><dt><span class="refentrytitle"><a href="#id1282981">CmpOk</a></span><span class="refpurpose"> — Compares two values using a custom compare function</span></dt><dt><span class="refentrytitle"><a href="#id1283123">Diag</a></span><span class="refpurpose"> — Output some text</span></dt><dt><span class="refentrytitle"><a href="#id1283247">Dump</a></span><span class="refpurpose"> — Dumps a data structure in YAML format.</span></dt><dt><span class="refentrytitle"><a href="#id1283364">Except</a></span><span class="refpurpose"> — Test code that is expected to throw an exception</span></dt><dt><span class="refentrytitle"><a href="#id1283612">Is</a></span><span class="refpurpose"> — Checks equality of two objects</span></dt><dt><span class="refentrytitle"><a href="#id1283794">Isa</a></span><span class="refpurpose"> — Check whether object is a (child of) a certain type</span></dt><dt><span class="refentrytitle"><a href="#id1283918">IsDeeply</a></span><span class="refpurpose"> — Checks equality of two complex data structures</span></dt><dt><span class="refentrytitle"><a href="#id1284052">Like</a></span><span class="refpurpose"> — Matches a value with a regular expression</span></dt><dt><span class="refentrytitle"><a href="#id1284346">Ok</a></span><span class="refpurpose"> — Reports success or failure depending on a boolean
+        or boolean function parameter.</span></dt><dt><span class="refentrytitle"><a href="#id1284518">Pass</a></span><span class="refpurpose"> — Output a success or failure report</span></dt><dt><span class="refentrytitle"><a href="#id1284621">Plan</a></span><span class="refpurpose"> — Declares the number of tests to be run by the script.</span></dt><dt><span class="refentrytitle"><a href="#id1284674">Skip</a></span><span class="refpurpose"> — Conditionally skip some tests</span></dt><dt><span class="refentrytitle"><a href="#id1284794">TimerReset</a></span><span class="refpurpose"> — Resets the per-test timer.</span></dt><dt><span class="refentrytitle"><a href="#id1284867">Todo</a></span><span class="refpurpose"> — Mark tests as todo</span></dt></dl></dd><dt><span class="chapter"><a href="#commandlineref">8. Command line reference</a></span></dt></dl></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id1280874"></a>Chapter 1. Introduction</h2></div></div></div><p>
+      You can find a recent copy of this document online at <a class="link" href="http://www.fwvdijk.org/taps/taps.html" target="_top">http://www.fwvdijk.org/taps/taps.html</a>. The
+      project home is <a class="link" href="http://code.google.com/p/taps-testing" target="_top">http://code.google.com/p/taps-testing</a>.
+    </p><p>
+      Taps is a test tool for the .NET framework and Mono. It is
+      inspired on Perl's testing facilities and therefore quite
+      different from the likes of tools like NUnit. Taps runs test
+      scripts and expects to see output that conforms
+      to <a class="link" href="http://search.cpan.org/~petdance/TAP-1.00/TAP.pm" target="_top">the
+      TAP protocol</a> on their stdouts. Test scripts use the TAP
+      class to run tests that generate the expected output. Here is a
+      minimal test script:
+      </p><pre class="programlisting">
+using Taps;
+
+class HelloTest: TAP  {
+
+  static void Main() {
+    Ok(true,"Hello, world");
+  }
+
+}
+      </pre><p>
+      To run this script we can type the following command at the
+      command prompt: <strong class="userinput"><code>tap -s hello.cs</code></strong> (assuming
+      we named the script <code class="filename">hello.cs</code>). The tap
+      program outputs:
+      </p><pre class="screen">
+ok 1 - Hello, world
+# all OK. (1 test)
+# Wall clock time: 00:00:00.1250000</pre><p>
+      The <code class="filename">hello.cs</code> script is compiled into an
+      executable. If tests fail or other oddities occur you are free
+      to run the executable by itself from the command line, a
+      debugger, a profiler etc.
+    </p><p>
+      The list below lists some features of Taps.
+    </p><div class="itemizedlist"><ul type="disc"><li><p>Perl Test::More-like function vocabulary.</p></li><li><p>Runs a single test script, multiple test
+        scripts or a directory tree of test scripts.</p></li><li><p>Can show per-test timings.</p></li><li><p>Outputs diagnostic info of failed tests in human
+        readable, yaml or "visual studio error list" compatible
+        format.</p></li><li><p>Can run multiple test scripts concurrently.</p></li><li><p>Allows a test script to run tests in multiple threads.</p></li><li><p>Does deep comparison of complex data structures and if
+        they are not equal outputs them annotated with a clear path
+        to the differing item.</p></li><li><p>Supports testing of classes and methods that have the
+        <code class="code">internal</code> access modifier.</p></li><li><p>Output readable by TAP consumers.</p></li></ul></div></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id1281172"></a>Chapter 2. License</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id1281210">Using Taps with closed source software</a></span></dt><dt><span class="section"><a href="#id1281248">Using Taps with open source software</a></span></dt></dl></div><p>Taps is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published
+    by the Free Software Foundation, either version 3 of the License,
+    or (at your option) any later version. Taps is distributed in the
+    hope that it will be useful, but WITHOUT ANY WARRANTY; without
+    even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+    PARTICULAR PURPOSE.  See the GNU General Public License for more
+    details. You should have received a copy of the GNU General Public
+    License along with Taps.  If not, see <a class="link" href="http://www.gnu.org/licenses/" target="_top">&lt;http://www.gnu.org/licenses/&gt;</a>.
+    You are granted an "additional permission" (as defined by section
+    7 of the GPL) regarding the use of this software in automated test
+    scripts; see the <code class="filename">COPYING.EXCEPTION</code> file for
+    details.
+
+    </p><p>You can read the GNU General Public License in the file
+    <code class="filename">COPYING</code>. Taps works by linking a GPL-covered
+    library to your tests scripts. This can potentially affect the
+    license status of your software.  Now, before you go all Steve
+    Ballmer on me, please note a few things:
+    </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281210"></a>Using Taps with closed source software</h2></div></div></div><p>
+        As long as you don't distribute your test scripts or Taps with
+        your software there is no issue: the GPL is extremely
+        permissive regarding the <span class="emphasis"><em>use</em></span> of
+        GPL-covered software.
+      </p><p>
+        In the unlikely case that you do distribute test scripts with
+        your software, the combined work of Taps, your test
+        script, and your software would become subject to the
+        GPL. This is not my intention. Therefore I have specified an
+        exception to the GPL that allows you to distribute your own
+        software under whatever restrictive license you want, if you
+        adhere to some rules. See the file
+        <code class="filename">COPYING.EXCEPTION</code>. The intention is
+        allowing use of Taps for testing programs without a GPL
+        compatible license, while still disallowing other uses of Taps
+        or parts of Taps in programs without a GPL compatible license.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281248"></a>Using Taps with open source software</h2></div></div></div><p>
+        If your program is some form of open source software you
+        probably want to distribute your test scripts with the source
+        code. Depending on the license you use there may or may not be
+        an issue. See <a class="link" href="http://www.gnu.org/philosophy/license-list.html" target="_top">gnu.org</a>
+        for information on various licenses and combining them with
+        the GPL.
+      </p><p>
+        However, it is not my intention to affect the license status
+        of your software just because you combine it with a Taps
+        library for testing. Therefore I have specified an exception
+        to the GPL that allows you to distribute your own software
+        under whatever license you want, if you adhere to some
+        rules. See the file
+        <code class="filename">COPYING.EXCEPTION</code>. The intention is
+        allowing use of Taps for testing programs without a GPL
+        compatible license, while still disallowing other uses of Taps
+        or parts of Taps in programs without a GPL compatible license.
+      </p></div></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id1281281"></a>Chapter 3. Running tests</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id1281296">General operation</a></span></dt><dt><span class="section"><a href="#id1281373">Command line arguments</a></span></dt><dt><span class="section"><a href="#id1281444">Accessing internal classes and methods</a></span></dt><dt><span class="section"><a href="#id1281493">A sample project</a></span></dt><dt><span class="section"><a href="#id1281777">Running scripts in parallel</a></span></dt><dt><span class="section"><a href="#id1281819">Timing tests</a></span></dt><dt><span class="section"><a href="#id1281878">Unhandled exceptions</a></span></dt></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281296"></a>General operation</h2></div></div></div><p>
+        Running tests is done with the <code class="filename">tap.exe</code>
+        tool. The <code class="filename">tap.exe</code> tool compiles test
+        scripts. Because a script is supposed to test some executable
+        or assembly, <code class="filename">tap.exe</code> references all dlls
+        and exes in your project's output dir. That includes your
+        project's executable or assembly and all local assemblies that
+        were copied there by your project's build process to make it
+        runnable. <code class="filename">tap.exe</code> adds itself as a
+        reference to the script as well, to allow the script to use
+        the TAP class with its test methods. The script is compiled
+        into an executable and placed into your project's output
+        directory. If the compiled script was already up to date, the
+        compilation step is skipped.
+      </p><p>
+        After the compilation step is done, <code class="filename">tap.exe</code> starts the script
+        executable as a child process. Because the script executable is
+        in your project's output dir, it has no problem finding its test
+        subject and dependent local assemblies. The test script outputs
+        its results to stdout. <code class="filename">tap.exe</code> forwards that to its own stdout and
+        keeps a score of the number failed and passed tests.
+      </p><p>
+        It is recommended that you run <code class="filename">tap.exe</code> from your project's
+        root dir. By convention, all test scripts for your project
+        should be placed in a subdirectory called 't'. This is the
+        default place for <code class="filename">tap.exe</code> to look for them. You can place them
+        somewhere else, but then you have to tell <code class="filename">tap.exe</code> about it.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281373"></a>Command line arguments</h2></div></div></div><p>
+        <code class="filename">tap.exe</code> accepts command line options
+        formatted in the style of <code class="filename">csc.exe</code>. A
+        command line switch starts with a dash (-) or a slash (/),
+        followed by a letter or a word naming the switch. If the
+        switch takes an argument, the switch name is followed by a
+        colon (:) and followed by the argument. You can get a list of
+        command line options by specifying the -h switch.
+      </p><p>
+        Apart from command line options <code class="filename">tap.exe</code> accepts paths that can
+        name directories and files. They determine which test scripts are
+        run. If you specify a directory, all .cs files in that
+        directory tree are run as test scripts. If the specified path
+        is not a directory it must name a file that is to be used as a
+        test script or it must be a wildcard pattern that names a set
+        of files. If you don't specify any paths <code class="filename">tap.exe</code> looks for .cs
+        files in the directory tree rooted by './t'.
+      </p><p>
+        All command line options are optional. However, it is
+        important to get the -s option right. The -s, -subject option
+        names the directory that your test subject (i.e. the
+        executable or dll that your project produces) resides in. If
+        you don't specify the -s option, the default is bin\Debug,
+        which coincidentally happens to be the default output
+        directory for a debug build in a project created by Visual
+        Studio. If you specify the -s option without an argument, the
+        default is '.', which may be ok for some quick and dirty
+        testing. To run a test script in file
+        <code class="filename">t/foo.cs</code> and some more test scripts in
+        directory <code class="filename">t/somemore</code> on a project that
+        uses a directory <code class="filename">out</code> as its output
+        directory you would use the following command:
+        </p><pre class="screen">
+tap -s:out t/foo.cs t/somemore</pre><p>
+      </p><p>
+        A thorough explanation of all command line options can be
+        found in <a class="xref" href="#commandlineref" title="Chapter 8. Command line reference">Chapter 8, <i>Command line reference</i></a>
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281444"></a>Accessing internal classes and methods</h2></div></div></div><p>Many object oriented languages use access modifiers
+      (public, protected, private) to make the distinction between the
+      public API and the internals of a system explicit. Access
+      modifiers can help make your software more stable and
+      usable. Unfortunately, they may get in the way of testing. A
+      test script only has access to the public API of the assembly or
+      application it tests, making it hard to test internals directly.
+      </p><p>
+        The .NET/Mono framework defines an InternalsVisibleToAttribute
+        that can help solve this problem. With the
+        InternalsVisibleToAttribute an assembly can allow assemblies
+        with specific names to access classes and methods that are
+        implicitly or explicitly declared <code class="code">internal</code>. All
+        test scripts compiled by <code class="filename">tap.exe</code> happen
+        to be named "taps". If you add the following declaration to
+        one of the source files of your project:
+        </p><pre class="screen">
+[assembly: InternalsVisibleTo("taps")]</pre><p>
+        all your internals are visible to your test scripts. If you
+        are using a Visual Studio generated project the proper place
+        to add that declaration would be
+        <code class="filename">./Properties/AssemblyInfo.cs</code>.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281493"></a>A sample project</h2></div></div></div><p>
+        The samples folder in the tap distribution contains some
+        sample projects. The project "simple" was created using Visual
+        Studio 2008 Express. Note that Visual Studio is not a
+        requirement for using TAP. You can run everything from the
+        command line or from other environments as well. The simple
+        project has the following directory layout:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>simple</p><div class="itemizedlist"><ul type="circle"><li><p>Properties</p></li></ul></div><div class="itemizedlist"><ul type="circle"><li><p>bin</p><div class="itemizedlist"><ul type="square"><li><p>Debug</p></li></ul></div><div class="itemizedlist"><ul type="square"><li><p>Release</p></li></ul></div></li><li><p>t</p></li></ul></div></li></ul></div><p>
+        All these directories were automatically created by the
+        project template of VS, except for
+        <code class="filename">./t</code>. <code class="filename">./t</code> contains
+        the tests in this project. The <code class="filename">Program.cs</code>
+        file contains a no-op program and some minimal classes called
+        A and B. The <code class="filename">./t</code> directory contains two
+        script files called <code class="filename">a.cs</code> and
+        <code class="filename">b.cs</code> that run some tests on those
+        classes. The project has a post-build event defined with a
+        command line that runs the tests it finds in the
+        <code class="filename">./t</code> directory after each build.
+      </p><p>
+        You can see what happens by building the project or the
+        solution in Visual Studio or by running a command line like
+        </p><pre class="screen">
+call "%VS90COMNTOOLS%/vsvars32.bat"
+msbuild</pre><p>
+        If you're using Mono on Unix, you could use MonoDevelop to
+        build the project, or do something like
+        </p><pre class="screen">
+gmcs -debug Program.cs Properties/AssemblyInfo.cs -out:bin/Debug/simple.exe
+        </pre><p>
+        The program should compile with no problem. If you're using
+        Visual Studio or msbuild, the tests are run after the
+        compilation step completes. The
+        <code class="filename">tap.exe</code> tool supports several output
+        modes. The <code class="filename">tap.exe</code> command line in the
+        project file specifies that the output should be "vs". The
+        "vs" output modes formats failure reports in such a way that
+        visual studio and msbuild recognize them as such. The output
+        for the <code class="filename">a.cs</code> script looks like this:
+        </p><pre class="screen">
+1..2
+ok 1
+not ok 2
+t\a.cs(13,9): warning T2: got: '2' expected: '1'
+not ok 3 - apples and oranges
+t\a.cs(14,9): warning T3: apples and oranges. actual not as expected
+  got:
+    ---
+    {b: 1}
+    #^HERE
+    ...
+  expected:
+    ---
+    {c: 2}
+    #^HERE
+    ...
+# FAILED. 1/3 test passed (33%)
+#    Number of planned tests did not match number of tests.
+#    planned: 2 run: 3
+# Wall clock time: 00:00:00.2187500</pre><p>
+        We can see that the first test was ok. Boring. The second test
+        failed. We expected that the b field of the object a of class
+        A was 1, but it turned out to be 2. The third test failed as
+        well. This test provided the string "apples and oranges" in the
+        optional "name" parameter of the test method. The string gets
+        printed in the test result. You can use the "name" as a
+        mnemonic while looking through lists of test results, although
+        you get source file and line number information, and in the
+        other output formats calling class and method names as
+        well. The third test used the IsDeeply() test method. The
+        IsDeeply() method compares complex data structures recursively
+        and provides a detailed output showing where they differ. In
+        this case, an object of class A and class B were
+        compared. IsDeeply() noticed that the first and only fields of
+        the classes have different names. As this was the first
+        difference it encountered on its traversal it points you to
+        the field names in the dumps of the objects.
+      </p><p>
+        After the tests in the script are done, we are presented with
+        a summary. The test run was a failure, with only 1 out of 3
+        tests succeeding. Additionally tap warns us that we planned 2
+        tests, but ran 3. The planned number of 2 was set by the
+        Plan(2) at the start of the test script. We tell tap how many
+        tests we plan to run to protect ourselves from scenarios where
+        a test accidentally doesn't get run at all for some reason. If
+        we would not set a planned number of tests, the script would
+        appear to succeed, hiding a bug.
+      </p><p>
+        Script <code class="filename">b.cs</code> succeeds with no problems, so let's go on to the
+        final summary:
+        </p><pre class="screen">
+# result after 2 scripts:
+# FAILED. 2/4 tests passed (50%)
+#    Number of planned tests did not match number of tests.
+#    planned: 3 run: 4
+# Wall clock time: 00:00:00.3906250</pre><p>
+        Fifty percent of the tests failed. On the other hand, fifty
+        percent succeeded, so yay. Also, we are reminded that the
+        number of tests did not match the planned number of tests.
+      </p><p>
+        The B class in <code class="filename">program.cs</code> doesn't have a
+        "public" access modifier, but both <code class="filename">a.cs</code>
+        and <code class="filename">b.cs</code> created objects of the class and
+        accessed its c field. Normally that would result in a
+        compilation error. The test scripts compile because the
+        simple.exe assembly that is generated by the "simple" project
+        explicitly gives permission to an assembly called "taps" to
+        access its internal classes and members. This was done by
+        adding an InternalsVisibleToAttribute to
+        <code class="filename">Properties/AssemblyInfo.cs</code>. If you look
+        in the <code class="filename">bin\Debug</code> directory after a
+        compilation, you will see the compiled tests scripts that are
+        left there, and you will notice that they are indeed both
+        called taps.
+      </p><p>
+        The test scripts don't have to be run in a post-build
+        event. You can run them separately. For example, if you run
+        the tap command without any options from
+        the <code class="filename">simple</code> directory then the tests are
+        run. The output is slightly different, because this time the
+        default output format is used. The difference is in the details
+        following a "not ok" report. For example, test 3
+        in <code class="filename">a.cs</code> now looks like this:
+        </p><pre class="screen">
+not ok 3 - apples and oranges
+  ---
+  severity: fail
+  file:     t\a.cs
+  line:     14
+  column:   9
+  method:   ATest.Main
+  actual:   {b: 1}
+            #^HERE
+  expected: {c: 2}
+            #^HERE
+  ...</pre><p>
+        This format uses YAML to be readable by both humans and
+        machines. Note the method name that wasn't shown in vs
+        mode. If you're using vs mode you're going to hit f4 to step
+        to the failing test anyway, so the information would be quite
+        useless. If you don't like the rather large yaml blobs,
+        there's terse mode, which writes this for failing test 2:
+        </p><pre class="screen">
+not ok 2
+#   failed test 2 (t\a.cs at pos 13,9 in ATest.Main)
+#        got: '2'
+#   expected: '1'</pre><p>
+      </p><p>
+        When you are looking to fix bugs exposed by one script, you
+        want to run only that script while you are working on the
+        fix. When you are done, you run all scripts to see what your
+        fixes broke. In this case <code class="filename">a.cs</code> is the script with issues, so
+        you would run only <code class="filename">a.cs</code>, like this: <strong class="userinput"><code>tap
+        t/a.cs</code></strong>
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281777"></a>Running scripts in parallel</h2></div></div></div><p>
+        if you specify the -p option <code class="filename">tap.exe</code> will run as many scripts
+        in parallel as there are CPUs in your box (as reported by
+        the framework). Depending on the awesomeness (or lack thereof)
+        of your machine and the nature of your test scripts this may
+        or may not increase or decrease the time it takes to run your
+        scripts. If you provide a numerical argument with the -p
+        option <code class="filename">tap.exe</code> will run that many scripts in parallel - if and
+        as long as there are that many scripts to run ofcourse.
+      </p><p>
+        The output of the scripts is printed in the same order
+        regardless of whether you run scripts in parallel or not. If
+        it is not a script's turn at <code class="filename">tap.exe</code>'s output yet <code class="filename">tap.exe</code>
+        buffers the script's output allowing it to run to completion
+        and allowing a fresh script to start. An example of an extreme
+        case on a 2-cpu system would be that of a suite of ten scripts
+        the first script takes a lot of time while the others are much
+        faster. The second script would run and its output would be
+        buffered. When the second script is done, the third script
+        would run and its output would be buffered, when the third
+        script... (you get the idea). Finally all scripts are done,
+        except the first one, which is still running. When the first
+        script finally completes, the buffered output of the long gone
+        second script would be printed. After that the buffered output
+        of the third script would be printed, etc, up to the tenth
+        script.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281819"></a>Timing tests</h2></div></div></div><p>
+        If you specify the -e switch on the <code class="filename">tap.exe</code> command line wall
+        clock timings are printed with each individual test
+        output. This time is the time elapsed from the end of the
+        previous test to the start of reporting of the current
+        test. So, if you have a sequence like this:
+        </p><pre class="programlisting">
+Is(Return1(),1);
+var res=SomeComputation();
+Is(SomeMoreComputation(res),23);
+        </pre><p>
+        then the timing of the second Is() call includes the time
+        taken by SomeComputation(), SomeMoreComputation() and the
+        comparison between the result of SomeMoreComputation() and
+        23. The first test in a script uses the call to the Plan()
+        method as its base line for timing. If you want to time from
+        something else than end of the previous test, you can call the
+        TimerReset() method.
+        </p><pre class="programlisting">
+Is(Return1(),1);
+var res=SomeComputation();
+TimerReset();
+Is(SomeMoreComputation(res),23);
+        </pre><p>
+        Now the timing of the second Is() no longer includes the time
+        taken by the SomeComputation() call.
+      </p><p>
+        If a timing takes a millisecond or more it is reported in
+        seconds, always with six decimals after the dot to make it
+        easy to mentally break up the number in milliseconds and
+        microseconds. Example: a timing of 21.642ms is reported as
+        <code class="computeroutput">ok 2 # 0.021642s</code>. If a timing
+        takes less than a millisecond the timing is reported in
+        microseconds, always with one decimal after the dot (the
+        maximum resolution of the underlying .NET API is
+        100ns). Example: a timing of 0.4241ms is reported
+        as <code class="computeroutput">ok 3 # 424.1us</code>
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1281878"></a>Unhandled exceptions</h2></div></div></div><p>
+        When an unhandled exception occurs in a test script it is
+        reported as a failed test. After that the test script
+        exits. For example the following test code:
+        </p><pre class="programlisting">
+class TestException: TAP  {
+
+  static int Crash() {
+      #pragma warning disable 162
+      throw new ApplicationException("oops.");
+      return 1;
+  }
+  
+  static int Main() {
+      Plan(3);
+      Ok(true);
+      Is(Crash(),1);
+      Ok(true);
+      return 0;
+  }
+    
+}
+        </pre><p>
+        results in output like this:
+        </p><pre class="screen">
+1..3
+ok 1
+not ok 2
+  ---
+  message:   oops.
+  severity:  fail
+  method:    TestException.Crash
+  backtrace: |2
+       at TestException.Crash() in c:\Documents and Settings\frank\Mijn documenten\Visual Studio 2008\Projects\tap\tap\t\exception.cs:line 12
+       at TestException.Main() in c:\Documents and Settings\frank\Mijn documenten\Visual Studio 2008\Projects\tap\tap\t\exception.cs:line 19
+  ...
+# FAILED. 1/2 test passed (50%)
+#    Number of planned tests did not match number of tests.
+#    planned: 3 run: 2
+# Wall clock time: 00:00:00.4687500</pre><p>
+      </p></div></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id1281905"></a>Chapter 4. Test scripts</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id1282023">All in Main</a></span></dt><dt><span class="section"><a href="#id1282065">Separate methods</a></span></dt><dt><span class="section"><a href="#id1282132">Threads</a></span></dt></dl></div><p>
+      Because it is a C# program, a test script requires a minimal
+      amount of boilerplate: a using, a class declaration and a
+      method. <code class="filename">tap.exe</code> can create a template for
+      you. If you run <strong class="userinput"><code>tap -t:Sally</code></strong> a script
+      called <code class="filename">sally.cs</code> is created and filled with:
+      </p><pre class="programlisting">
+using Taps;
+using System;
+
+class SallyTest: TAP {
+
+    static int Main() {
+        //Plan(1);
+        //Autorun(typeof(SallyTest));
+        Ok(1==1,"hello!");
+        return 0;
+    }
+}
+      </pre><p>
+      The <code class="code">using Taps</code> imports the TAP class and its
+      methods. The <code class="code">using System</code> is not strictly
+      necessary, but may come in handy. You are free to add usings. In
+      particular you probably want to import the namespace where your
+      test subjects reside. The only reason SallyTest derives from TAP
+      is that TAP's methods can be called without a <code class="code">TAP.</code>
+      prefix. You are free not to derive from a class, or to derive
+      from another class, for example to access its protected methods
+      or to implement its virtual methods. If you don't derive from
+      TAP you have to type <code class="code">TAP.Ok(...)</code> instead of
+      <code class="code">Ok(...)</code>.
+    </p><p>
+      The <code class="code">Plan()</code> call is commented out in the template
+      because strictly speaking it is optional. You really should use
+      it though; it protects you from false positives. After the
+      <code class="code">Plan()</code> call appears a commented out
+      <code class="code">Autorun()</code> call. The <code class="code">Autorun()</code> method
+      calls all parameterless void methods in the class matching a
+      certain pattern. By default the pattern is "starting with
+      Test". Using <code class="code">Autorun()</code> you can organize the tests
+      in your scripts in methods. After the <code class="code">Autorun()</code>
+      call the template contains a sample call to the simplest test
+      method. <code class="code">Ok()</code> takes a boolean parameter and succeeds
+      if it is true and fails if it is false.
+    </p><p>
+      <code class="filename">tap.exe</code> doesn't care how you organize your
+      test scripts. It is only interested in the output of your test
+      method calls. So, depending on your taste and on the demands of
+      the particular test problem you're trying to solve you call test
+      methods in a simple row in <code class="code">Main()</code> or as part of an
+      intricate web of loops, method calls or even thread spawns.
+    </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282023"></a>All in Main</h2></div></div></div><p>
+        Putting everything in <code class="code">Main</code> is the simplest
+        approach. It is appropriate for very simple test scripts,
+        containing only a few tests or maybe a loop that does the same
+        test over and over for different input values. For
+        example:
+        </p><pre class="programlisting">
+static int Main() {
+  Plan(3);
+  int a=1;
+  int b=3;
+  Is(a+b,4);
+  string tdhs="tom dick harry sally";
+  Like(tdhs,@"^tom\b.*\bharry\b");
+  Isnt(tdhs.IndexOf("harry"),-1);
+  return 0;
+}
+        </pre><p>
+        or
+        </p><pre class="programlisting">
+static int Main() {
+  Plan(1000);
+  for(int k=0;k!=1000;++k) {
+    Ok(new string('x',k).Length,k);
+  }
+}
+        </pre><p>
+        This approach gets unwieldy if the number of tests grows to
+        more than a handful. A particular problem is the fact that
+        more and more local variables share the namespace of
+        <code class="code">Main</code>'s code block. As you add tests, you get
+        collisions of your favorite scratch variable names and subtle
+        errors because of variables that are dirtied by preceding code.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282065"></a>Separate methods</h2></div></div></div><p>
+        If you have more than a few tests it is a good idea to
+        split them up into separate methods. That way you create
+        multiple smaller namespaces, reducing the chance of naming
+        collisions and dirty variables and improving readability. The
+        first example of the previous section could be rewritten as
+        </p><pre class="programlisting">
+static int Main() {
+  Plan(3);
+  TestInt()
+  TestString();
+  return 0;
+}
+
+static void TestInt() {
+  int a=1;
+  int b=3;
+  Is(a+b,4);
+}
+
+static void TestString() {
+  string tdhs="tom dick harry sally";
+  Like(tdhs,@"^tom\b.*\bharry\b");
+  Isnt(tdhs.IndexOf("harry"),-1);
+}
+        </pre><p>
+        Calling each method from <code class="code">Main()</code> is tedious and
+        easily forgotten. The <code class="code">Autorun()</code> method handles
+        that for you. Just change <code class="code">Main()</code> to:
+        </p><pre class="programlisting">
+static int Main() {
+  Plan(3);
+  Autorun(typeof(TestClass));
+  return 0;
+}
+        </pre><p>
+        where TestClass is the name of the main class in the script
+        (or, unusually, any other class you like). By default,
+        <code class="code">Autorun()</code> runs all parameterless void object and
+        class methods with names that start with "test", not caring
+        about case. <code class="code">Autorun()</code> takes optional string or
+        Regex objects to override the "starts with test" rule. This is
+        useful for temporarily limiting method execution to one or
+        more methods while tracking down some nasty problem with
+        them. In the above example, to run <code class="code">TestInt()</code>
+        only, just use
+        <code class="code">Autorun(typeof(TestClass),"TestInt")</code>.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282132"></a>Threads</h2></div></div></div><p>
+        Often a test script will be a simple single threaded
+        program. However, a multithreaded test script can be
+        useful. One example could be stressing a system by using it
+        from many threads at once. Another example would be a test
+        subject that invokes callbacks from a thread other than the
+        main thread. The methods that your test scripts call in the
+        TAP class are thread safe and make sure that the report of one
+        test is not mixed with the report of another test. Other than
+        that threading is not treated specially. A test script is just
+        a program. That means for example that Thread.IsBackground
+        behaviour is just like a normal program: background threads
+        are terminated when the main thread ends while nonbackground
+        threads block program termination until they finish.
+        </p><pre class="programlisting">
+          
+using Taps;
+using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+
+class ThreadTest: TAP {
+
+    static int Main() {
+        Plan(100);
+        foreach(var i in Enumerable.Range(0,100)) {
+            var t=new Thread(Runner);
+            t.Start(i);
+        }
+        return 0;
+    }
+
+    static Queue&lt;int&gt; Queue=new Queue&lt;int&gt;(Enumerable.Range(0,100));
+
+    static void Runner(object o) {
+        int n=(int)o;
+        Thread.Sleep(500);
+        int element=-1;
+        lock(Queue) {
+            if(Queue.Count!=0) element=Queue.Dequeue();
+        }
+        Isnt(element,-1,string.Format("thread {0} got element {1}",n,element));
+    }
+
+}
+</pre><p>
+        This example creates 100 threads that each sleep for a bit and then
+        retrieve a number from a queue. Each thread runs a test
+        verifying it got a number from the queue. The threads are not
+        background threads, so the script process keeps running
+        although the main method is already done. The output looks
+        something like this:
+        </p><pre class="screen">
+1..100
+ok 1 - thread 8 got element 7
+ok 2 - thread 47 got element 41
+ok 3 - thread 12 got element 12
+ok 4 - thread 21 got element 15
+
+...
+
+ok 96 - thread 67 got element 63
+ok 97 - thread 65 got element 62
+ok 98 - thread 5 got element 2
+ok 99 - thread 95 got element 76
+ok 100 - thread 61 got element 54
+# all OK. (100 tests)
+# Wall clock time: 00:00:01.1718750</pre><p>
+        This output illustrates an important point about threaded
+        tests. The tests may not run in a predictable order. It
+        doesn't matter to <code class="filename">tap.exe</code> - it just checks whether the planned
+        amount of tests succeed. It does matter to you in that when
+        looking at a multithreaded test script output you should not
+        rely on test numbers to identify tests. Use the name parameter
+        of test methods to show clear comments or look at line numbers
+        and calling method names as appropriate.
+      </p></div></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id1282169"></a>Chapter 5. Test methods</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id1282230">Simple comparison</a></span></dt><dt><span class="section"><a href="#id1282308">Advanced comparison</a></span></dt><dt><span class="section"><a href="#id1282386">Diagnostics methods</a></span></dt><dt><span class="section"><a href="#id1282491">Miscellaneous</a></span></dt></dl></div><p>
+      The test methods provided by the TAP class are inspired on the
+      Test::More Perl package. The basic layout of a method is
+      <code class="code">method(param,...[,name])</code>. The "name" parameter is an
+      optional string that is printed with the test report to make it
+      easy for you to find a test result in a lengthy list. In the
+      sections below the "name" parameter is ignored for brevity.
+    </p><p>
+      Many test methods compare two values in some way. In all those
+      methods the rightmost value is considered the "expected" value,
+      while the leftmost value is considered the "actual" value. It is
+      important to keep to this convention in order to get sensible
+      test reports. To give an example, if you want to check whether
+      the result of a method <code class="code">SomeFunc()</code> is 42, write
+      <code class="code">Is(SomeFunc(),42)</code>, not
+      <code class="code">Is(42,SomeFunc())</code>.
+    </p><p>
+      The test methods run in the current culture of the thread but
+      during the output of test results to stdout they switch to the
+      invariant culture. This means that you can switch cultures in
+      your test scripts without affecting the TAP output and without
+      risking confusing the TAP consumer.
+    </p><p>
+      See also <a class="xref" href="#apiref" title="Chapter 7. API reference">Chapter 7, <i>API reference</i></a>.
+    </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282230"></a>Simple comparison</h2></div></div></div><p>
+        The <code class="code">Ok()</code> method comes in two flavors,
+        <code class="code">Ok(bool)</code> and
+        <code class="code">Ok(Func&lt;bool&gt;)</code>. The first variant reports
+        success if the bool is true and failure if the bool is
+        false. The second variant returns success if the function
+        returns true and failure if the function returns false.
+      </p><p>
+        The <code class="code">Is()</code> and <code class="code">Isnt()</code> methods take two
+        parameters and compare them using the object.Equals() class
+        method. Is succeeds if the two parameters compare equal. Isnt
+        succeeds if the two parameters do not compare equal. If the
+        methods fail they show the values they were called with so you
+        can wonder how the hell <span class="emphasis"><em>that</em></span> happened.
+      </p><p>
+        The <code class="code">Like()</code> and <code class="code">Unlike()</code> methods are
+        similar to the <code class="code">Is()</code> and <code class="code">Isnt()</code>
+        methods. They also take two parameters for a
+        comparison. However, the second ("expected") parameter must be
+        a regular expression, either as a string or as a Regex
+        object. The first parameter is converted to a string and then
+        matched against the Regex.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282308"></a>Advanced comparison</h2></div></div></div><p>
+        The <code class="code">CmpOk()</code> method takes two values and a
+        function that returns a boolean based on two values it is
+        given. The function returning true is considered a
+        success. This method is useful if Is and Like don't meet your
+        comparing needs. You can define your own comparison by passing
+        in a lambda, or if your comparison is more complex or
+        reusable, a method name.
+      </p><p>
+        The <code class="code">Isa()</code> method takes an object parameter and a
+        Type parameter and tests whether the object is of the expected
+        type, or derived from it.
+      </p><p>
+        The <code class="code">IsDeeply()</code> method performs a more thorough
+        comparison than <code class="code">Is()</code>. It recursively walks
+        IEnumerables, IDictionaries, structs and classes looking for
+        elements that differ. If an object defines its own
+        <code class="code">Equals()</code> method, the comparison stops
+        there. Otherwise, IsDeeply() compares the elements of two
+        dictionaries or enumerables, or compares the fields of two
+        objects. It does not attempt to compare the properties of
+        objects, as properties are actually methods and calling them
+        can have all kinds of nasty side
+        effects. <code class="code">IsDeeply()</code> detects cycles in complex
+        data structures to prevent itself from walking circles. A
+        comparison is considered a failure if values don't compare
+        equal, keys or field names don't compare equal, or if the
+        number of elements or fields don't match.
+      </p><p>
+        If <code class="code">IsDeeply()</code> considers the comparison a failure,
+        it dumps the objects as a YAML tree to stdout, annotating the
+        path through the tree that leads to the failure with
+        comments so you don't have to repeat the entire comparison
+        with your eyeballs.
+      </p><p>
+        <code class="code">IsDeeply()</code> is not afraid of complex
+        data structures with lots of cycles in it, but most of the time
+        you'll probably be using it for relatively simple data
+        structures like onedimensional lists:
+        </p><pre class="programlisting">
+IsDeeply(Enumerable.Range(0,3),new[]{0,2,2});
+        </pre><p>
+        </p><pre class="screen">
+  actual:   [0, 1, 2]
+            #   ^HERE
+  expected: [0, 2, 2]
+            #   ^HERE</pre><p>
+        </p><pre class="programlisting">
+IsDeeply(Enumerable.Range(0,2),new[]{0,1,2});
+        </pre><p>
+        </p><pre class="screen">
+  actual:     # COUNT MISMATCH 2 vs 3
+    [0, 1]
+  expected:   # COUNT MISMATCH 3 vs 2
+    [0, 1, 2]
+    #      ^HERE</pre><p>
+        or classes that you can't be bothered writing an Equals()
+        for:
+        </p><pre class="programlisting">
+class A {
+    int X;
+    int Y;
+    string Z;
+    public A(int x,int y,string z) {
+        X=x; Y=y; Z=z;
+    }
+}
+
+...
+
+IsDeeply(new A(1,2,"Sally"),new A(1,3,"Sally"));
+        </pre><p>
+        </p><pre class="screen">
+  actual:   {X: 1, Y: 2, Z: Sally}
+            #      ^HERE
+  expected: {X: 1, Y: 3, Z: Sally}
+            #      ^HERE</pre><p>
+        The next example is a little more interesting. It compares two
+        StringWriters. The StringWriter class is part of the .NET
+        Framework, in the System.IO namespace. I am not suggesting
+        this is a sane way of testing whether a StringWriter has the
+        content you expected. <code class="code">Is(sw.ToString(),"b")</code> would
+        be the way to go. This way I don't have to invent a complex
+        data structure for the example though:
+        </p><pre class="programlisting">
+var sw=new StringWriter();
+sw.Write("a");
+var sw2=new StringWriter();
+sw2.Write("b");
+IsDeeply(sw,sw2);
+        </pre><p>
+        </p><pre class="screen">
+  actual:   
+    _sb:           # HERE
+      m_currentThread: 1419048
+      m_MaxCapacity:   2147483647
+      m_StringValue:   a  # HERE
+    _isOpen:     True
+    CoreNewLine: ["\r", "\n"]
+  expected: 
+    _sb:           # HERE
+      m_currentThread: 1419048
+      m_MaxCapacity:   2147483647
+      m_StringValue:   b  # HERE
+    _isOpen:     True
+    CoreNewLine: ["\r", "\n"]</pre><p>
+        The "HERE" annotation tells us that of the three member fields
+        of the StringWriter the _sb field (a StringBuilder) is where
+        the difference is. Within the StringBuilder the next "HERE"
+        points us to the m_StringValue field, containing "a" in the
+        actual value and "b" in the expected value.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282386"></a>Diagnostics methods</h2></div></div></div><p>
+        The Dump() method dumps an object recursively as a YAML tree,
+        much like IsDeeply does when it it fails.
+        </p><pre class="programlisting">
+var sw=new StringWriter();
+sw.Write("a");
+Dump("stringwriter",sw);
+        </pre><p>
+        </p><pre class="screen">
+# dump of stringwriter: 
+---
+_sb:         
+  m_currentThread: 1419048
+  m_MaxCapacity:   2147483647
+  m_StringValue:   a
+_isOpen:     True
+CoreNewLine: ["\r", "\n"]
+...</pre><p>
+      </p><p>
+        The Diag() method writes a line to stdout, like
+        Console.WriteLine(), but it prefixes it with a '#' so a TAP
+        parser will ignore it. Like WriteLine(), Diag() takes a string
+        as its first parameter, and optional parameters after that. If
+        there are optional parameters they are used to format them
+        into the first parameter, like string.Format. The VDiag()
+        method is identical to the Diag() method, except it takes an
+        int as its first parameter. If that int is greater than the
+        verbosity level specified on the command line of <code class="filename">tap.exe</code>, the
+        Diagnostic is not printed.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282491"></a>Miscellaneous</h2></div></div></div><p>
+        The Pass() and Fail() methods pass and fail without actually
+        testing anything. They are useful for scenarios like "Yes,
+        this callback was called", "Should not get here",
+        etcetera.
+      </p><p>
+        The Except() method is used for cases where you expect an
+        exception. It takes an Action delegate as its first parameter,
+        and a Type, string or Regex as its second parameter. The test
+        fails if no exception is thrown from the action, or if an
+        exception that is not of the expected Type or doesn't have a
+        message equalling the expected string or matching the expected
+        Regex.
+        </p><pre class="programlisting">
+var dic=new Dictionary&lt;string,string&gt;();
+Except(()=&gt;{
+        string v=dic["Tom"];
+    },
+    typeof(ArgumentException),"getting nonexistent key");
+          </pre><p>
+        </p><pre class="screen">
+not ok 6 - getting nonexistent key
+  ---
+  message:  the exception was not (a child) of the expected type
+  severity: fail
+  file:     sally.cs
+  line:     31
+  column:   9
+  method:   SallyTest.Main
+  actual:   KeyNotFoundException
+  expected: ArgumentException
+  ...</pre><p>
+      </p><p>
+        The Skip() method allows you to conditionally skip some
+        tests. For example, if some tests require an apache web server
+        to be installed on the system, you would do something like
+        this:
+        </p><pre class="programlisting">
+bool ApacheInstalled() {
+  // return true if apache is installed
+}
+
+Pass("this works fine");
+Skip("no apache installed",2,ApacheInstalled,()=&gt;{
+  AddVirtualHost("www2.example.com","/var/www/www2");
+  Is(GetVirtualHostPath("www2.example.com"),"/var/www/www2");
+  DelVirtualHost("www2.example.com");
+  Is(GetVirtualHostPath("www2.example.com"),null);
+});
+        </pre><p>
+        </p><pre class="screen">
+ok 1 - this works fine
+ok 2 - # SKIP no apache installed
+ok 3 - # SKIP no apache installed</pre><p>
+        The SKIP message in the output, followed by the reason, is
+        recognized by TAP parsers so they can use the information in
+        their reporting.
+      </p><p>
+        The Todo method wraps a lambda or a method containing
+        tests. The tests are expected to fail and marked as todo, with
+        an explanatory message.
+        </p><pre class="programlisting">
+Todo("will implement real soon now",()=&gt;{
+  Ok(NotImplementedYet());
+});
+        </pre><p>
+        </p><pre class="screen">
+not ok 1 # TODO will implement real soon now</pre><p>
+        The TODO message in the output, followed by the message, is
+        recognized by TAP parsers so they can use the information in
+        their reporting. You could use Todo() in a programming style
+        where you first define some system in terms of tests and then
+        implement that system by writing code that makes the tests
+        succeed (test-driven development).
+      </p></div></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id1282577"></a>Chapter 6. Integration with other software</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id1282584">Emacs</a></span></dt><dt><span class="section"><a href="#id1282624">Visual studio</a></span></dt><dt><span class="section"><a href="#id1282680">Test-Harness</a></span></dt></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282584"></a>Emacs</h2></div></div></div><p>
+        To allow Emacs compilation mode to recognize failed tests and
+        to jump to the source locations, add these to your
+        <code class="filename">.emacs</code>:
+        </p><pre class="programlisting">
+; for yaml format
+(push '("^  file:\\s-+\\(.*\\)\n  line:\\s-+\\(.*\\)\n
+column:\\s-+\\(.*\\)" 1 2 3) compilation-error-regexp-alist)
+; for terse format
+(push '("(\\(.*\\) at pos \\([0-9]+\\),\\([0-9]+\\) in .*)$" 1 2 3) compilation-error-regexp-alist)
+        </pre><p>
+        (presumably you already have the msbuild-like pattern). With
+        this configuration you can walk through the test failures in
+        addition to the usual compiler errors using
+        <code class="code">next-error</code>, bound to <code class="code">C-x `</code> and maybe
+        <code class="code">M-g n</code> and others.
+      </p><p>
+          Mono's debug info doesn't give us column numbers, so for Mono use the following:
+        </p><pre class="programlisting">
+; for yaml format
+(push '("^  file:\\s-+\\(.*\\)\n  line:\\s-+\\(.*\\)" 1 2) compilation-error-regexp-alist)
+; for terse format
+(push '("(\\(.*\\) at pos \\([0-9]+\\) in .*)$" 1 2) compilation-error-regexp-alist)
+        </pre><p>
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282624"></a>Visual studio</h2></div></div></div><p>
+        There is no add-on yet. For now, you need to do something like
+        adding a post build event:
+        </p><pre class="programlisting">
+cd $(ProjectDir) &amp;&amp; tap -s:$(OutDir) -f:vs
+        </pre><p>
+        This changes the current dir to the project root and then runs
+        <code class="filename">tap.exe</code>. <code class="filename">tap.exe</code>
+        will look for test scripts in a directory
+        <code class="filename">./t</code> and run them on the exes and dlls it
+        finds in $(OutDir), which is bin\Debug or bin\Release or
+        something, depending on which build configuration you run. The
+        -f:vs switch causes <code class="filename">tap.exe</code> to output
+        test failures in a Visual Studio compatible format.
+      </p><p>
+        You can walk through the test failures in the error list or
+        output pane of VS using F4 or whatever you bound
+        GoToNextLocation to. The output pane is more practical than
+        the error list pane, because you can read the diagnostic
+        output and yaml dumps around the failing test. VS may insist
+        on switching to the error list in error run. You can disable
+        this behaviour in tools -&gt; options (show all settings) -&gt;
+        projects and solutions -&gt; general. Disable 'always show error
+        list if build finishes with errors', and maybe enable 'show
+        output window when build starts'.
+      </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id1282680"></a>Test-Harness</h2></div></div></div><p>
+        <a class="link" href="http://search.cpan.org/~andya/Test-Harness" target="_top">Test-Harness</a>
+        is an example of a TAP consumer. It runs test scripts,
+        consumes TAP output and displays statistics. The Test-Harness
+        distribution comes with a command line tool called
+        <code class="filename">prove</code> that you can use to run Taps
+        tests. You need a 3.x version - I tested with 3.14. To run
+        <code class="filename">prove</code> in the
+        <code class="filename">samples/simple</code> project, type:
+        </p><pre class="screen">prove -e "tap -z" t/*.cs</pre><p>
+        Prove shows a nice progress indicator for long-running test
+        suites and has a number of other interesting features. It
+        defeats <code class="filename">tap.exe</code>'s <code class="option">-p</code>
+        command line option because it runs
+        <code class="filename">tap.exe</code> for each test script, but luckily
+        it has its own parallel test feature: just add a
+        <code class="option">-j</code> <span class="emphasis"><em>n</em></span> switch to the
+        command line.
+      </p><p>
+        Instead of using <code class="filename">prove</code> you can write a
+        Perl script that uses the TAP::Harness module provided by
+        Test-Harness to run tests through
+        <code class="filename">tap.exe</code>. An example of such a script is
+        in <code class="filename">.\tap\tapharness.pl</code>. To use it to run
+        the tests in the <code class="filename">samples/simple</code> project,
+        type: </p><pre class="screen">perl ..\..\tap\tapharness.pl t\*.cs</pre><p>
+      </p></div></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="apiref"></a>Chapter 7. API reference</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="refentrytitle"><a href="#id1282781">Autorun</a></span><span class="refpurpose"> — Runs methods automatically.</span></dt><dt><span class="refentrytitle"><a href="#id1282981">CmpOk</a></span><span class="refpurpose"> — Compares two values using a custom compare function</span></dt><dt><span class="refentrytitle"><a href="#id1283123">Diag</a></span><span class="refpurpose"> — Output some text</span></dt><dt><span class="refentrytitle"><a href="#id1283247">Dump</a></span><span class="refpurpose"> — Dumps a data structure in YAML format.</span></dt><dt><span class="refentrytitle"><a href="#id1283364">Except</a></span><span class="refpurpose"> — Test code that is expected to throw an exception</span></dt><dt><span class="refentrytitle"><a href="#id1283612">Is</a></span><span class="refpurpose"> — Checks equality of two objects</span></dt><dt><span class="refentrytitle"><a href="#id1283794">Isa</a></span><span class="refpurpose"> — Check whether object is a (child of) a certain type</span></dt><dt><span class="refentrytitle"><a href="#id1283918">IsDeeply</a></span><span class="refpurpose"> — Checks equality of two complex data structures</span></dt><dt><span class="refentrytitle"><a href="#id1284052">Like</a></span><span class="refpurpose"> — Matches a value with a regular expression</span></dt><dt><span class="refentrytitle"><a href="#id1284346">Ok</a></span><span class="refpurpose"> — Reports success or failure depending on a boolean
+        or boolean function parameter.</span></dt><dt><span class="refentrytitle"><a href="#id1284518">Pass</a></span><span class="refpurpose"> — Output a success or failure report</span></dt><dt><span class="refentrytitle"><a href="#id1284621">Plan</a></span><span class="refpurpose"> — Declares the number of tests to be run by the script.</span></dt><dt><span class="refentrytitle"><a href="#id1284674">Skip</a></span><span class="refpurpose"> — Conditionally skip some tests</span></dt><dt><span class="refentrytitle"><a href="#id1284794">TimerReset</a></span><span class="refpurpose"> — Resets the per-test timer.</span></dt><dt><span class="refentrytitle"><a href="#id1284867">Todo</a></span><span class="refpurpose"> — Mark tests as todo</span></dt></dl></div><div class="refentry" lang="en" xml:lang="en"><a id="id1282781"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Autorun — Runs methods automatically.</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="void">void </span><span class="methodname">Autorun</span>(<span class="methodparam"><span class="type">Type </span><span class="parameter">t</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="void">void </span><span class="methodname">Autorun</span>(<span class="methodparam"><span class="type">Type </span><span class="parameter">t</span></span>,<br />                           <span class="methodparam"><span class="modifier">params </span><span class="type">string[] </span><span class="parameter">ps</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="void">void </span><span class="methodname">Autorun</span>(<span class="methodparam"><span class="type">Type </span><span class="parameter">t</span></span>,<br />                           <span class="methodparam"><span class="modifier">params </span><span class="type">Regex[] </span><span class="parameter">ps</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1282869"></a><h2>Description</h2>
+        
+        <p>
+          Runs methods declared in Type <em class="parameter"><code>t</code></em> that
+          meet the following requirements:
+          </p><div class="itemizedlist"><ul type="disc"><li><p>Not an anonymous method</p></li><li><p>Name is not "Main"</p></li><li><p>Has void return type</p></li><li><p>Has no parameters</p></li><li><p>Name matches at least one of the regular
+              expressions in <em class="parameter"><code>ps</code></em>, or, if no
+              <em class="parameter"><code>ps</code></em> provided, matches the regular
+              expression <code class="code">/^test/</code> (ignoring case)</p></li></ul></div><p>
+          The methods can be class methods or object methods. When
+          Autorun() encounters the first object method it creates an
+          instance of type <em class="parameter"><code>t</code></em> and invokes that
+          method and all other object methods on that instance. If the
+          class implements IDisposable then Autorun() calls Dispose()
+          when it is done.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1282952"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+using Taps;
+using System;
+
+class AutorunTest: TAP, IDisposable {
+
+    static int Main() {
+        Plan(5);
+        Pass("tests outside the autorunned methods are called");
+        Autorun(typeof(AutorunTest));
+        Pass("so this one too");
+        return 0;
+    }
+
+    static void TestStatic() {
+        Pass("static");
+    }
+
+    void TestObject() {
+        Pass("object");
+    }
+
+    public void Dispose() {
+        Pass("dispose");
+    }
+    
+}            
+          </pre><p>
+          </p><pre class="screen">
+1..5
+ok 1 - tests outside the autorunned methods are called
+ok 2 - static
+ok 3 - object
+ok 4 - dispose
+ok 5 - so this one too
+# all OK. (5 tests)
+# Wall clock time: 00:00:00.1250000</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1282981"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>CmpOk — Compares two values using a custom compare function</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">CmpOk</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                         <span class="methodparam"><span class="type">Func&lt;T,U,bool&gt; </span><span class="parameter">cmp</span></span>,<br />                         <span class="methodparam"><span class="type">U </span><span class="parameter">expected</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">CmpOk</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                         <span class="methodparam"><span class="type">Func&lt;T,U,bool&gt; </span><span class="parameter">cmp</span></span>,<br />                         <span class="methodparam"><span class="type">U </span><span class="parameter">expected</span></span>,<br />                         <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283065"></a><h2>Description</h2>
+        
+        <p>
+          Calls the function <em class="parameter"><code>cmp</code></em> with
+          <em class="parameter"><code>got</code></em> and
+          <em class="parameter"><code>expected</code></em>. If
+          <em class="parameter"><code>cmp</code></em> returns true, it is considered a
+          success, otherwise it is considered a failure. If the
+          result is a failure or if the verbose level is 4 or greater
+          a diagnostic containing location information and the actual
+          value and the expected value are printed. Returns true on
+          success and false on failure.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283091"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Plan(2);
+string MuellerD="Mu\u0308ller"; // 0308 = combining umlaut
+string MuellerC=MuellerD.Normalize();
+Is(MuellerD,MuellerC);
+CmpOk(MuellerD,(g,e)=&gt;string.Compare(g,e)==0,MuellerC);
+          </pre><p>
+          </p><pre class="screen">
+1..2
+not ok 1
+  ---
+  severity: fail
+  file:     harry.cs
+  line:     12
+  column:   9
+  method:   HarryTest.Main
+  actual:   Müller
+  expected: Müller
+  ...
+ok 2</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1283123"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Diag, VDiag — Output some text</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Diag</span>(<span class="methodparam"><span class="type">string </span><span class="parameter">fmt</span></span>,<br />                        <span class="methodparam"><span class="modifier">params </span><span class="type">object[] </span><span class="parameter">ps</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">VDiag</span>(<span class="methodparam"><span class="type">int </span><span class="parameter">v</span></span>,<br />                         <span class="methodparam"><span class="type">string </span><span class="parameter">fmt</span></span>,<br />                         <span class="methodparam"><span class="modifier">params </span><span class="type">object[] </span><span class="parameter">ps</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283203"></a><h2>Description</h2>
+        
+        <p>
+          Diag() and VDiag() write a "#" followed by
+          <em class="parameter"><code>fmt</code></em> with placeholders substituted by
+          values from ps, as in string.Format(). VDiag() only writes
+          something if the verbose level is at least
+          <em class="parameter"><code>v</code></em>.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283224"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Plan(0);
+Diag("can you hear me now ?");
+VDiag(4,"Backgroundness of the thread: {0}",Thread.CurrentThread.IsBackground);
+          </pre><p>
+          </p><pre class="screen">
+1..0
+# can you hear me now ?</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1283247"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Dump — Dumps a data structure in YAML format.</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="void">void </span><span class="methodname">Dump</span>(<span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>,<br />                        <span class="methodparam"><span class="type">object </span><span class="parameter">o</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283288"></a><h2>Description</h2>
+        
+        <p>
+          Prints a header containing <code class="computeroutput"># dump of
+          <em class="parameter"><code>name</code></em></code>, followed by a
+          YAML dump of object <em class="parameter"><code>o</code></em>. Short
+          sequences of elements and key-value pairs are printed
+          horizontally. Longer sequences are printed vertically, as
+          demonstrated by the "harry" dictionary entry in the example
+          below. Cycles are represented using YAML references.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283304"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Dump("a null object",null);
+          </pre><p>
+          </p><pre class="screen">
+# dump of a null object: 
+---
+~
+...</pre><p>
+          </p><pre class="programlisting">
+class A {
+    int X;
+    Dictionary&lt;string,double[]&gt; Y;
+    string Z;
+    public A(int x,Dictionary&lt;string,double[]&gt; y,string z) {
+        X=x; Y=y; Z=z;
+    }
+}
+
+...
+
+Dump("A",new A(42,new Dictionary&lt;string,double[]&gt;{
+            {"tom",new[]{1.2,1.3}},
+            {"dick",new[]{1.3,1.4,1/3}},
+            {"harry",new[]{1.3,1.4,double.Epsilon,Math.E,Math.PI}},
+            {"sally",new[]{double.PositiveInfinity,double.NaN,1/5}}},
+        "hi there!"));
+        </pre><p>
+          </p><pre class="screen">
+# dump of A: 
+---
+X: 42
+Y: 
+  dick:  [1.3, 1.4, 0]
+  harry: 
+    - 1.3
+    - 1.4
+    - 4.94065645841247E-324
+    - 2.71828182845905
+    - 3.14159265358979
+  sally: [Infinity, NaN, 0]
+  tom:   [1.2, 1.3]
+Z: hi there!
+...</pre><p>
+          </p><pre class="programlisting">
+class B {
+    public B c;
+    public B d;
+}
+
+...
+
+var b=new B();
+var b2=new B();
+b.c=b2;
+b.d=b2;
+b2.c=b;
+b2.d=b2;
+Dump("b",b);
+        </pre><p>
+          </p><pre class="screen">
+# dump of b: 
+---
+&amp;id0
+c: &amp;id1
+  c: *id0
+  d: *id1
+d: *id1
+...
+          </pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1283364"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Except — Test code that is expected to throw an exception</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Except</span>(<span class="methodparam"><span class="type">Action </span><span class="parameter">f</span></span>,<br />                          <span class="methodparam"><span class="type">Type </span><span class="parameter">exceptiontype</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Except</span>(<span class="methodparam"><span class="type">Action </span><span class="parameter">f</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">errtext</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Except</span>(<span class="methodparam"><span class="type">Action </span><span class="parameter">f</span></span>,<br />                          <span class="methodparam"><span class="type">Regex </span><span class="parameter">errtext</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Except</span>(<span class="methodparam"><span class="type">Action </span><span class="parameter">f</span></span>,<br />                          <span class="methodparam"><span class="type">Type </span><span class="parameter">exceptiontype</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Except</span>(<span class="methodparam"><span class="type">Action </span><span class="parameter">f</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">errtext</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Except</span>(<span class="methodparam"><span class="type">Action </span><span class="parameter">f</span></span>,<br />                          <span class="methodparam"><span class="type">Regex </span><span class="parameter">errtext</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283545"></a><h2>Description</h2>
+        
+        <p>
+          Executes the <em class="parameter"><code>f</code></em> delegate. Fails if f
+          does not throw an exception, or if it throws an exception of
+          a type that is not an <em class="parameter"><code>exceptiontype</code></em>,
+          or if it throws an exception with a message that is not the
+          <em class="parameter"><code>errtext</code></em> string or that is not the
+          <em class="parameter"><code>errtext</code></em> regular expression. Returns
+          true if it succeeds.
+        </p>
+        <p>
+          If Except() fails it outputs a diagnostic containing
+          location information and if <em class="parameter"><code>f</code></em> threw,
+          the actual and expected exception type or message.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283586"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Plan(1);
+Except(()=&gt;{
+        File.OpenText("c:\\bad\\path");
+    },"oops");
+          </pre><p>
+          </p><pre class="screen">
+1..1
+not ok 1
+  ---
+  message:  the exception message did not match
+  severity: fail
+  file:     harry.cs
+  line:     8
+  column:   9
+  method:   HarryTest.Main
+  actual:   Could not find a part of the path 'c:\bad\path'.
+  expected: oops
+  ...</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1283612"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Is, Isnt — Checks equality of two objects</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Is</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                      <span class="methodparam"><span class="type">T </span><span class="parameter">expected</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Is</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                      <span class="methodparam"><span class="type">T </span><span class="parameter">expected</span></span>,<br />                      <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Isnt</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                        <span class="methodparam"><span class="type">T </span><span class="parameter">expected</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Isnt</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                        <span class="methodparam"><span class="type">T </span><span class="parameter">expected</span></span>,<br />                        <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283741"></a><h2>Description</h2>
+        
+        <p>
+          Calls the object.Equals(a,b) method on
+          <em class="parameter"><code>got</code></em> and
+          <em class="parameter"><code>expected</code></em>. Is succeeds when Equals
+          returns true, Isn't succeeds when Equals returns false. If
+          the result is failure or if the verbose level is 4 or
+          greater a diagnostic containing location information and the
+          actual and expected value are printed. Returns true on
+          success and false on failure.
+        </p>
+        <p>
+          For an equality check on complex data structures see IsDeeply().
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283771"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Is(null,"a");
+Isnt(1,2,"um. no.");
+Is(1,1);
+          </pre><p>
+          </p><pre class="screen">
+not ok 1
+  ---
+  severity: fail
+  file:     t\testis.cs
+  line:     16
+  column:   9
+  method:   TestIs.Main
+  actual:   ~
+  expected: a
+  ...
+ok 2 - um. no.
+ok 3</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1283794"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Isa — Check whether object is a (child of) a certain type</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Isa</span>(<span class="methodparam"><span class="type">object </span><span class="parameter">o</span></span>,<br />                       <span class="methodparam"><span class="type">Type </span><span class="parameter">t</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Isa</span>(<span class="methodparam"><span class="type">object </span><span class="parameter">o</span></span>,<br />                       <span class="methodparam"><span class="type">Type </span><span class="parameter">t</span></span>,<br />                       <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283867"></a><h2>Description</h2>
+        
+        <p>
+          Checks whether <em class="parameter"><code>o</code></em> is of type
+          <em class="parameter"><code>t</code></em> or derived from it. If it does,
+          Isa() succeeds. If it doesn't it fails. If Isa() fails or if
+          the verbose level is 4 or greater a diagnostic containing
+          location information and the actual and expected types are
+          printed. Returns true on success, false on failure.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283890"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+class TestIsa: TAP  {
+
+    static int Main() {
+        Plan(4);
+        Isa(1,typeof(int));
+        Isa("a",typeof(string),"it's a string");
+        Isa(new TestIsa(),typeof(string));
+        Isa(new TestIsa(),typeof(TAP));
+        return 0;
+    }
+    
+}
+          </pre><p>
+          </p><pre class="screen">
+1..4
+ok 1
+ok 2 - it's a string
+not ok 3
+  ---
+  severity: fail
+  file:     t\testisa.cs.notcs
+  line:     14
+  column:   9
+  method:   TestIsa.Main
+  actual:   TestIsa
+  expected: System.String
+  ...
+ok 4</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1283918"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>IsDeeply — Checks equality of two complex data structures</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">IsDeeply</span>(<span class="methodparam"><span class="type">object </span><span class="parameter">got</span></span>,<br />                            <span class="methodparam"><span class="type">object </span><span class="parameter">expected</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">IsDeeply</span>(<span class="methodparam"><span class="type">object </span><span class="parameter">got</span></span>,<br />                            <span class="methodparam"><span class="type">object </span><span class="parameter">expected</span></span>,<br />                            <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1283990"></a><h2>Description</h2>
+        
+        <p>
+          Traverses the object graphs of <em class="parameter"><code>got</code></em>
+          and <em class="parameter"><code>expected</code></em> looking for
+          differences. If an object overrides the default
+          object.Equals() then that method is used for comparison and
+          IsDeeply() digs no deeper in that direction. Otherwise,
+          IsDeeply() tries to compare the keys and values of an
+          IDictionary if the object is an IDictionary, tries to
+          compare the elements of an IEnumerable if the object is an
+          IEnumerable, or tries to compare the field names and field
+          values of the object. IsDeeply() avoids visiting a vertex in
+          the object graph more than once.
+        </p>
+        <p>
+          IsDeeply() reports failure if it finds values that don't
+          compare equal, keys that don't compare equal, field names
+          that don't compare equal or lengths of enumerables,
+          dictionaries and field lists that don't compare
+          equal. IsDeeply() compares the key-values in a dictionary in
+          the order of the result of an Array.Sort() on the key array,
+          unless the dictionary is an IOrderedDictionary. Field lists
+          are not sorted for comparison.
+        </p>
+        <p>
+          The comparison stops at the first inequality encountered. If
+          the result is failure or if the verbose level is 4 or
+          greater a diagnostic containing location information and the
+          actual and expected value are printed. The actual and
+          expected value are printed in YAML format, like an object
+          printed by the Dump() method. The dump is annotated with
+          comments showing the path to the mismatching
+          element. IsDeeply() return true on success and false on
+          failure.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284015"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+class A {
+    public int[] ints;
+    string hi="hi\tthere!";
+}
+
+static int Main() {
+    Plan(1);
+    var l1=MkList();
+    var l2=MkList();
+    l1[1]["dick"].ints[1]=-1;
+    l1[2]=l2[2];
+    IsDeeply(l1,l2);
+    return 0;
+}
+
+static List&lt;Dictionary&lt;string,A&gt;&gt; MkList() {
+    var l=new List&lt;Dictionary&lt;string,A&gt;&gt;();
+    l.Add(MkDict(0));
+    l.Add(MkDict(1));
+    l.Add(MkDict(2));
+    return l;
+}
+
+static Dictionary&lt;string,A&gt; MkDict(int k) {
+    return new Dictionary&lt;string,A&gt;{
+        {"tom",new A{ints=Enumerable.Range(1+k,3).ToArray()}},
+        {"dick",new A{ints=Enumerable.Range(4+k,3).ToArray()}},
+        {"harry",new A{ints=Enumerable.Range(8+k,3).ToArray()}},
+        {"sally",new A{ints=Enumerable.Range(12+k,3).ToArray()}}
+    };
+}
+</pre><p>
+In the output below, note the "HERE" annotation that show you that the
+difference is in the second element of the list, in the value of the
+dictionary entry keyed by "dick", in the "ints" field of the value of
+the dictionary entry, in the second element of the array. Also note
+that the third elements in l1 and l2 are references to the same
+object. The first time the YAML printer encounters the object it
+labels it with <code class="computeroutput">&amp;id57</code> (it's the
+57th node it encounters in the graph) and prints it in its
+entirety. The second time it encounters it it only outputs a reference
+to the id57 label, writing <code class="computeroutput">*id57</code>.
+          </p><pre class="screen">
+1..1
+not ok 1
+  ---
+  severity: fail
+  file:     harry.cs
+  line:     18
+  column:   9
+  method:   HarryTest.Main
+  actual:   
+    - dick:  
+        ints: [4, 5, 6]
+        hi:   "hi\tthere!"
+      harry: 
+        ints: [8, 9, 10]
+        hi:   "hi\tthere!"
+      sally: 
+        ints: [12, 13, 14]
+        hi:   "hi\tthere!"
+      tom:   
+        ints: [1, 2, 3]
+        hi:   "hi\tthere!"
+    -   # HERE
+      dick:    # HERE
+        ints:   # HERE
+          [5, -1, 7]
+          #   ^HERE
+        hi:   "hi\tthere!"
+      harry: 
+        ints: [9, 10, 11]
+        hi:   "hi\tthere!"
+      sally: 
+        ints: [13, 14, 15]
+        hi:   "hi\tthere!"
+      tom:   
+        ints: [2, 3, 4]
+        hi:   "hi\tthere!"
+    - &amp;id57
+      dick:  
+        ints: [6, 7, 8]
+        hi:   "hi\tthere!"
+      harry: 
+        ints: [10, 11, 12]
+        hi:   "hi\tthere!"
+      sally: 
+        ints: [14, 15, 16]
+        hi:   "hi\tthere!"
+      tom:   
+        ints: [3, 4, 5]
+        hi:   "hi\tthere!"
+  expected: 
+    - dick:  
+        ints: [4, 5, 6]
+        hi:   "hi\tthere!"
+      harry: 
+        ints: [8, 9, 10]
+        hi:   "hi\tthere!"
+      sally: 
+        ints: [12, 13, 14]
+        hi:   "hi\tthere!"
+      tom:   
+        ints: [1, 2, 3]
+        hi:   "hi\tthere!"
+    -   # HERE
+      dick:    # HERE
+        ints:   # HERE
+          [5, 6, 7]
+          #   ^HERE
+        hi:   "hi\tthere!"
+      harry: 
+        ints: [9, 10, 11]
+        hi:   "hi\tthere!"
+      sally: 
+        ints: [13, 14, 15]
+        hi:   "hi\tthere!"
+      tom:   
+        ints: [2, 3, 4]
+        hi:   "hi\tthere!"
+    - *id57
+  ...
+          </pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1284052"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Like, Unlike — Matches a value with a regular expression</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Like</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                        <span class="methodparam"><span class="type">string </span><span class="parameter">expected</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Like</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                        <span class="methodparam"><span class="type">string </span><span class="parameter">expected</span></span>,<br />                        <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Like</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                        <span class="methodparam"><span class="type">Regex </span><span class="parameter">expected</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Like</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                        <span class="methodparam"><span class="type">Regex </span><span class="parameter">expected</span></span>,<br />                        <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Unlike</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">expected</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Unlike</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">expected</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Unlike</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                          <span class="methodparam"><span class="type">Regex </span><span class="parameter">expected</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Unlike</span>(<span class="methodparam"><span class="type">T </span><span class="parameter">got</span></span>,<br />                          <span class="methodparam"><span class="type">Regex </span><span class="parameter">expected</span></span>,<br />                          <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284289"></a><h2>Description</h2>
+        
+        <p>
+          Matches <em class="parameter"><code>got</code></em> with the regular expression
+          <em class="parameter"><code>expected</code></em>. Like succeeds when the
+          match succeeds, Unlike succeeds when the match fails. If the
+          result is a failure or if the verbose level is 4 or greater
+          a diagnostic containing location information and the actual
+          value and the regex are printed. Returns true on success and
+          false on failure.
+        </p>
+        <p>
+          If <em class="parameter"><code>expected</code></em> is supplied as a string
+          it is converted to a case sensitive culture invariant Regex.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284323"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Plan(3);
+Like(1,new Regex("^1$"));
+Like(11,"^1$");
+Unlike(11,"^1$");
+          </pre><p>
+          Terse format output:
+          </p><pre class="screen">
+1..3
+ok 1
+not ok 2
+#   failed test 2 (harry.cs at pos 10,9 in HarryTest.Main)
+#   '11'
+#   =~
+#   '^1$'
+ok 3</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1284346"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Ok — Reports success or failure depending on a boolean
+        or boolean function parameter.</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Ok</span>(<span class="methodparam"><span class="type">bool </span><span class="parameter">res</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Ok</span>(<span class="methodparam"><span class="type">bool </span><span class="parameter">res</span></span>,<br />                      <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Ok</span>(<span class="methodparam"><span class="type">Func&lt;bool&gt; </span><span class="parameter">del</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Ok</span>(<span class="methodparam"><span class="type">Func&lt;bool&gt; </span><span class="parameter">del</span></span>,<br />                      <span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284450"></a><h2>Description</h2>
+        
+        <p>
+          If <em class="parameter"><code>res</code></em> is true or the result of
+          calling <em class="parameter"><code>del</code></em> is true the test
+          succeeds, otherwise it fails. If the test fails or if the
+          verbose level is 4 or greater a diagnostic containing
+          location information is printed. The method returns
+          <em class="parameter"><code>res</code></em> or the result of
+          <em class="parameter"><code>del</code></em>.
+        </p>
+        <p>
+          Don't write <code class="code">Ok(a==b)</code>. Write
+          <code class="code">Is(a,b)</code> instead. Is() gives you better failure
+          reporting.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284493"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Plan(2);
+Ok(Thread.CurrentThread.IsAlive);
+if(!Ok(Thread.CurrentThread.IsBackground,"is it a bg thread ?"))
+    Diag("didn't see that one coming");
+          </pre><p>
+          </p><pre class="screen">
+1..2
+ok 1
+not ok 2 - is it a bg thread ?
+  ---
+  severity: fail
+  file:     harry.cs
+  line:     9
+  column:   9
+  method:   HarryTest.Main
+  ...
+# didn't see that one coming</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1284518"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Pass, Fail — Output a success or failure report</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Pass</span>(<span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code><br /><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Fail</span>(<span class="methodparam"><span class="type">string </span><span class="parameter">name</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284576"></a><h2>Description</h2>
+        
+        <p>
+          Pass outputs an <code class="computeroutput">ok</code>. Fail()
+          outputs a <code class="computeroutput">not ok</code>. Fail()
+          outputs a diagnostic containing location information. If the
+          verbose level is 4 or greater Pass() does the same.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284597"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Plan(2);
+Pass("got here");
+Fail("did not expect to get here");
+          </pre><p>
+          </p><pre class="screen">
+1..2
+ok 1 - got here
+not ok 2 - did not expect to get here
+  ---
+  severity: fail
+  file:     harry.cs
+  line:     11
+  column:   9
+  method:   HarryTest.Main
+  ...</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1284621"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Plan — Declares the number of tests to be run by the script.</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="void">void </span><span class="methodname">Plan</span>(<span class="methodparam"><span class="type">int </span><span class="parameter">tests</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284657"></a><h2>Description</h2>
+        
+        <p>
+          Declares the number of tests that are expected to be
+          executed by the test script. <code class="filename">tap.exe</code> or
+          another TAP parser can compare this number to the number of
+          tests actually run and signal an error if they don't
+          match. This prevents false positives in case tests are
+          skipped for example because they are within conditionals
+          that don't evaluate as expected or in callbacks that didn't
+          get called. Calling Plan() is optional but highly
+          recommended. In addition to its primary role Plan() resets
+          the timer for the optional per-test timings.
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1284674"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Skip — Conditionally skip some tests</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="type">bool </span><span class="methodname">Skip</span>(<span class="methodparam"><span class="type">string </span><span class="parameter">why</span></span>,<br />                        <span class="methodparam"><span class="type">int </span><span class="parameter">n</span></span>,<br />                        <span class="methodparam"><span class="type">Func&lt;bool&gt; </span><span class="parameter">unless</span></span>,<br />                        <span class="methodparam"><span class="type">Action </span><span class="parameter">del</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284728"></a><h2>Description</h2>
+        
+        <p>
+          If <em class="parameter"><code>unless</code></em> evaluates to true, Skip()
+          executes <em class="parameter"><code>del</code></em>. If
+          <em class="parameter"><code>unless</code></em> evaluates to false, Skip()
+          outputs <em class="parameter"><code>n</code></em>
+          <code class="computeroutput">ok</code> reports annotated with
+          the word SKIP and with the <em class="parameter"><code>why</code></em>
+          message. The SKIP word at that position in the output is
+          understood by TAP parsers to be a skipped test and a parser
+          can count it as such in its statistics. Returns true if it
+          skipped <em class="parameter"><code>del</code></em>.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284769"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Skip("thingie not installed",2,IsThingieInstalled,()=&gt;{
+  var thingie=CreateThingie();
+  Ok(thingie.Status);
+  Is(thingie.Number,23);
+});
+          </pre><p>
+          </p><pre class="screen">
+ok 1 - # SKIP thingie not installed            
+ok 2 - # SKIP thingie not installed            </pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1284794"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>TimerReset — Resets the per-test timer.</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="void">void </span><span class="methodname">TimerReset</span>();</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284824"></a><h2>Description</h2>
+        
+        <p>
+          The timer for the optional per-test timings gets reset by
+          the Plan() method and before a test method returns. You can
+          call this method if you want to reset the timer manually.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284838"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Plan(1);
+Thread.Sleep(5000);
+Pass("done");
+          </pre><p>
+          </p><pre class="screen">
+1..1
+ok 1 - done # 5.012228s</pre><p>
+          </p><pre class="programlisting">
+Plan(1);
+Thread.Sleep(5000);
+TimerReset();
+Pass("done");
+          </pre><p>
+          </p><pre class="screen">
+1..1
+ok 1 - done # 0.017257s</pre><p>
+        </p>
+      </div></div><div class="refentry" lang="en" xml:lang="en"><div class="refentry.separator"><hr /></div><a id="id1284867"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>Todo — Mark tests as todo</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><code class="methodsynopsis"><span class="modifier">public static </span><span class="void">void </span><span class="methodname">Todo</span>(<span class="methodparam"><span class="type">string </span><span class="parameter">why</span></span>,<br />                        <span class="methodparam"><span class="type">Action </span><span class="parameter">del</span></span>);</code></div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284909"></a><h2>Description</h2>
+        
+        <p>
+          Executes <em class="parameter"><code>del</code></em>, but marks the output of
+          tests in <em class="parameter"><code>del</code></em> as todo, with
+          <em class="parameter"><code>why</code></em> as an additional comment.
+        </p>
+      </div><div class="refsect1" lang="en" xml:lang="en"><a id="id1284931"></a><h2>Examples</h2>
+        
+        <p>
+          </p><pre class="programlisting">
+Todo("patience",()=&gt;{   // remove this line when done
+  Is(WorkingOnIt(),23);
+  Pass("yay");
+};                      // and this line too
+          </pre><p>
+          </p><pre class="screen">
+not ok 1 # TODO patience
+ok 2 - yay # TODO patience (unexpectedly succeeded)</pre><p>
+        </p>
+      </div></div></div><div class="chapter" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="commandlineref"></a>Chapter 8. Command line reference</h2></div></div></div><p>
+      You can specify switches and paths on the command line of
+      <code class="filename">tap.exe</code>. It doesn't matter whether you specify switches before,
+      after, or between paths. The paths you supply determine the
+      scripts that get run. If you don't supply any paths <code class="filename">tap.exe</code>
+      recursively looks for scripts in directory
+      <code class="filename">.\t</code>. This reflects the recommended practice
+      of having a <code class="filename">.\t</code> directory for your scripts
+      at your project root. If a path that you specify is an existing
+      directory then <code class="filename">tap.exe</code> recursively looks for scripts in that
+      directory. Otherwise, the path must name either an existing
+      script or, using a wildcard pattern, a set of existing scripts.
+    </p><p>
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="option">-e, -elapsed</code></span></dt><dd><p>
+              Show elapsed time in a comment with each
+              <code class="computeroutput">ok</code> and
+              <code class="computeroutput">not ok</code>. The time is the
+              time elapsed since the end of the previous test or a
+              call to Plan() or TimerReset().
+            </p></dd><dt><span class="term"><code class="option">-f:<em class="replaceable"><code>fmt</code></em>, -format:<em class="replaceable"><code>fmt</code></em></code></span></dt><dd><p>
+              Selects one of the output format
+              modes. <em class="replaceable"><code>fmt</code></em> should be either
+              <code class="option">yaml</code> for machine readable YAML
+              format, <code class="option">terse</code> for compact human
+              readable or <code class="option">vs</code> for visual studio
+              and msbuild readable. The default is
+              <code class="option">yaml</code>.
+            </p></dd><dt><span class="term"><code class="option">-h, -help</code></span></dt><dd><p>
+              Lists available command line options.
+            </p></dd><dt><span class="term"><code class="option">-j:<em class="replaceable"><code>thresh</code></em>, -horizontalthresh:<em class="replaceable"><code>thresh</code></em></code></span></dt><dd><p>
+              When printing YAML output, if a collection can be
+              printed horizontally in less than
+              <em class="replaceable"><code>thresh</code></em> characters, it is
+              printed horizontally. Otherwise it is printed
+              vertically. The default is 60 characters.
+            </p></dd><dt><span class="term"><code class="option">-p:<em class="replaceable"><code>n</code></em>, -parallel:<em class="replaceable"><code>n</code></em></code></span></dt><dd><p>
+              Compiles and runs <em class="replaceable"><code>n</code></em> test
+              scripts in parallel (as long as
+              <code class="filename">tap.exe</code> has enough scripts to
+              run). If no <code class="option">-p</code> option is supplied, the
+              test scripts are run one at a time. If a
+              <code class="option">-p</code> option is supplied, but no
+              <em class="replaceable"><code>n</code></em>,
+              <em class="replaceable"><code>n</code></em> is assumed to be equal to
+              the number of cores in the system.
+            </p></dd><dt><span class="term"><code class="option">-r:<em class="replaceable"><code>ref</code></em>, -reference:-r:<em class="replaceable"><code>ref</code></em></code></span></dt><dd><p>
+              Add a reference to an additional assembly to link
+              against when compiling a script. You can specify
+              multiple <code class="option">-r</code> switches on the command
+              line.
+            </p></dd><dt><span class="term"><code class="option">-s:<em class="replaceable"><code>path</code></em>,
+          -subject:<em class="replaceable"><code>path</code></em></code></span></dt><dd><p>
+              <em class="replaceable"><code>path</code></em> is the directory where
+              the test subject assembly resides with its local
+              dependencies (typically the output directory of the
+              project you are testing). If you don't specify a
+              <code class="option">-s</code> option, the default is
+              <strong class="userinput"><code>bin\Debug</code></strong>. If you specify the
+              option without a <em class="replaceable"><code>path</code></em>, the
+              default is <strong class="userinput"><code>.</code></strong>.
+            </p></dd><dt><span class="term"><code class="option">-t:<em class="replaceable"><code>name</code></em>, -template:<em class="replaceable"><code>name</code></em></code></span></dt><dd><p>
+              Writes a template test script in the current directory
+              in a file named <em class="replaceable"><code>name</code></em>.cs. The
+              template script will contain a main class, derived from
+              the TAP class, named
+              <code class="code"><em class="replaceable"><code>name</code></em>Test</code>.
+            </p></dd><dt><span class="term"><code class="option">-v:<em class="replaceable"><code>level</code></em>, -verbose:<em class="replaceable"><code>level</code></em></code></span></dt><dd><p>
+              Sets the verbose level to
+              <em class="replaceable"><code>level</code></em>. At higher verbose
+              levels more details, mostly about internal workings of
+              <code class="filename">tap.exe</code> are printed. You can do your own verbose level
+              regulated printing by using the VDiag() method in your
+              scripts. If the verbose level is 0, no output from the
+              test scripts is printed, only summaries. The default
+              verbose level is 1.
+            </p></dd><dt><span class="term"><code class="option">-z, -zero</code></span></dt><dd><p>
+              Makes <code class="filename">tap.exe</code> return 0, even if
+              some tests fail. Some TAP consumers interpret a nonzero
+              return value as something awful.
+            </p></dd></dl></div><p>
+    </p></div></div></body></html>
