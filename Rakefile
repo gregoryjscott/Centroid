@@ -76,12 +76,17 @@ namespace :test do
     system "python -m unittest python.tests"
   end
 
-  desc "Test ruby"
+  desc "Test python TAP example"
+  task :pytap do
+    system "python python/ok.t | tapout"
+  end
+
+  desc "Test ruby (using TAP)"
   task :rb do
     system "ruby ruby/test/centroid_test.rb --runner json | tapout"
   end
 
-  desc "Test .NET tap example"
+  desc "Test .NET TAP example"
   task :tap do
     system "dot-net/test/support/tap.exe -s:dot-net/Centroid.Tests/bin/Debug dot-net/Centroid.Tests/hello.cs"
   end
