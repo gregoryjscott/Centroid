@@ -28,11 +28,11 @@ class Config:
 
     def _validate_unique_keys(self):
         normalized_keys = defaultdict(list)
-        for key, _ in self.raw_config.iteritems():
+        for key, _ in self.raw_config.items():
             normalized_keys[_get_normalised_key(key)].append(key)
 
         dups = list()
-        for _, value in normalized_keys.iteritems():
+        for _, value in normalized_keys.items():
             if len(value) > 1:
                 dups.extend(value)
 

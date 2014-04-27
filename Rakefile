@@ -73,7 +73,7 @@ namespace :test do
 
   desc "Test python"
   task :py do
-    system "python -m unittest python.tests"
+    system "python python/tests.py"
   end
 
   desc "Test python TAP example"
