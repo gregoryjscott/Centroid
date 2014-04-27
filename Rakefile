@@ -76,11 +76,6 @@ namespace :test do
     system "python python/tests.py"
   end
 
-  desc "Test python TAP example"
-  task :pytap do
-    system "python python/pytap.py | node node_modules/tap-parser/example/parse.js"
-  end
-
   desc "Test ruby (using TAP)"
   task :rb do
     system "ruby ruby/test/centroid_test.rb --runner tap | node node_modules/tap-parser/example/parse.js"
