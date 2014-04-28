@@ -1,5 +1,7 @@
 import unittest
+import taprunner
 import json
+import sys
 from centroid import Config
 
 class ConfigTest(unittest.TestCase):
@@ -90,4 +92,4 @@ class ConfigTest(unittest.TestCase):
         self.assertEqual(itemCount, 1)
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(testRunner=taprunner.TAPTestRunner(sys.stdout))

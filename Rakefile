@@ -71,9 +71,9 @@ namespace :test do
     cmd.files = ["dot-net/Centroid.Tests/bin/Debug/Centroid.Tests.dll"]
   end
 
-  desc "Test python"
+  desc "Test python (using TAP)"
   task :py do
-    system "python python/tests.py"
+    system "python python/tests.py | node node_modules/tap-parser/example/parse.js"
   end
 
   desc "Test ruby (using TAP)"
