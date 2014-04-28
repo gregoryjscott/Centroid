@@ -71,6 +71,10 @@ namespace :test do
     cmd.files = ["dot-net/Centroid.Tests/bin/Debug/Centroid.Tests.dll"]
   end
 
+  task :cstap do
+    system "dot-net/packages/NUnit.Runners.2.6.3/tools/nunit-console.exe dot-net/Centroid.Tests/bin/Debug/Centroid.Tests.dll //out:TestResult.txt"
+  end
+
   desc "Test python (using TAP)"
   task :py do
     system "python python/tests.py | node node_modules/tap-parser/example/parse.js"
