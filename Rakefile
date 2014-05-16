@@ -72,7 +72,7 @@ namespace :test do
   end
 
   task :cstap do
-    system "dot-net/packages/NUnit.Runners.2.6.3/tools/nunit-console.exe dot-net/Centroid.Tests/bin/Debug/Centroid.Tests.dll //out:TestResult.txt"
+    system "dot-net/packages/NUnit.Runners.2.6.3/tools/nunit-console.exe dot-net/Centroid.Tests/bin/Debug/Centroid.Tests.dll -out:TestResult.txt -nologo"
   end
 
   desc "Test python (using TAP)"
@@ -87,7 +87,7 @@ namespace :test do
 
   desc "Test .NET TAP example"
   task :tap do
-    system "dot-net/test/support/tap.exe -s:dot-net/Centroid.Tests/bin/Debug dot-net/Centroid.Tests/hello.cs | node node_modules/tap-parser/example/parse.js"
+    system "dot-net/test/support/tap.exe -s:dot-net/Centroid.Tests/bin/Debug dot-net/Centroid.Tests/hello.cs"
   end
 end
 
